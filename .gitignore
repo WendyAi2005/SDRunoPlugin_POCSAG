@@ -1,0 +1,12 @@
+build/
+*.obj
+*.pdb
+*.exp
+*.lib
+*.user
+*.suo
+.vs/
+
+# Keep the tested distributable binary.
+!release/
+!release/SDRunoPlugin_POCSAG.dll
