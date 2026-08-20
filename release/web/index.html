@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>铁路列车实时地图</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>.line-editor{display:grid;grid-template-columns:1fr auto auto;gap:5px;margin-top:9px}.line-editor input{min-width:0;padding:5px;border:1px solid #3a4d6b;border-radius:5px;background:#0e1829;color:#e8eef8}.line-editor button{padding:5px 8px;font-size:11px}.line-origin{color:#8fb4dc;font-size:11px}</style>
+</head>
+<body>
+  <aside>
+    <header><h1>当前列车</h1><span id="connection">正在连接</span></header>
+    <section id="coordinate-settings">
+      <h2>坐标调试 / 切换</h2>
+      <label>原始格式<select id="raw-format"><option value="AUTO">AUTO</option><option value="NMEA" selected>NMEA 度分</option><option value="DECIMAL">十进制度</option></select></label>
+      <label>源坐标系<select id="source-datum"><option value="WGS84" selected>WGS84</option><option value="GCJ02">GCJ-02</option><option value="BD09">BD-09</option></select></label>
+      <label>地图显示转换<select id="map-transform"><option value="NONE" selected>不转换</option><option value="WGS84_GCJ02">WGS84 → GCJ-02</option><option value="WGS84_BD09">WGS84 → BD-09</option><option value="GCJ02_WGS84">GCJ-02 → WGS84</option><option value="GCJ02_BD09">GCJ-02 → BD-09</option><option value="BD09_WGS84">BD-09 → WGS84</option></select></label>
+      <button id="restore-defaults" type="button">恢复默认</button>
+      <p id="coordinate-mode"></p>
+    </section>
+    <section id="mileage-settings">
+      <h2>线路里程定位</h2>
+      <label>默认线路<input id="default-line" value="沪昆线" placeholder="例如 沪昆线"></label>
+      <button id="apply-default-line" type="button">应用默认线路</button>
+      <label>位置优先级<select id="position-priority"><option value="AUTO" selected>AUTO</option><option value="RADIO">RADIO GPS ONLY</option><option value="MILEAGE">MILEAGE ONLY</option><option value="OSM">OSM ONLY</option></select></label>
+      <label class="check"><input id="compare-positions" type="checkbox"> 显示 GPS 与公里标对比</label>
+      <label class="check"><input id="show-anchors" type="checkbox"> 显示学习锚点</label>
+      <label class="check"><input id="learning-enabled" type="checkbox" checked> 自动学习公里标位置</label>
+      <div class="mileage-search"><input id="search-line" value="沪昆线" placeholder="线路，例如 沪昆线"><input id="search-km" placeholder="公里标，例如 K1130.1"><button id="search-position">定位</button></div>
+      <p id="mileage-search-result"></p>
+      <div class="button-row"><button id="export-mileage">导出数据库</button><button id="import-mileage">导入数据库</button><input id="import-mileage-file" type="file" accept="application/json" hidden><button id="clear-mileage" class="danger">清空学习数据</button></div>
+      <div id="mileage-summary">正在读取线路学习数据库…</div>
+    </section>
+    <div id="train-list"></div>
+  </aside>
+  <main>
+    <div id="map"></div>
+    <div id="map-unavailable" hidden>底图不可用<br><small>当前目标列表仍可用</small></div>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

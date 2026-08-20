@@ -6,7 +6,20 @@ build/
 *.user
 *.suo
 .vs/
+artifacts/
+tests/*.wav
+tests/*.json
+
+# Local milestone packages and field-analysis outputs are not part of the
+# public first release. Keep only the clean files directly under release/.
+release/*_202608*.dll
+release/railway_*_20260820/
+release/target_uid_merge_20260820/
 
 # Keep the tested distributable binary.
 !release/
 !release/SDRunoPlugin_POCSAG.dll
+!release/RailwayMapServer.exe
+!release/README_CN.md
+!release/web/
+!release/web/**
