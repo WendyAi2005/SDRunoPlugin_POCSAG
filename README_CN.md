@@ -1,4 +1,8 @@
-# SDRuno POCSAG 列车接近预警接收插件
+# SDRuno POCSAG Railway Alert：开发与技术资料
+
+[项目首页](README.md) · [中文操作指南](docs/USER_GUIDE_CN.md) · [协议说明](docs/PROTOCOL_NOTES_CN.md) · [故障排查](docs/TROUBLESHOOTING_CN.md)
+
+本文保留面向开发、现场调试和实现核对的技术摘要。第一次安装请先阅读[项目首页](README.md)和[中文操作指南](docs/USER_GUIDE_CN.md)。铁路应用层字段为基于实测 RAW 数据与公开资料的实验性解析，不是官方铁路协议规范。
 
 这是一个只接收的 SDRuno 社区插件。它直接读取 SDRuno 内部的 NFM 音频流并解码 POCSAG，不需要 VB-CABLE、PDW，也不包含任何发射功能。
 
@@ -41,7 +45,7 @@
 - 每次实时 POCSAG transmission 都分配 `transmission_id`。
 - 合法 `1234000`（严格 3 CW、无不可纠错、15 字符固定格式）可以独立生成 `BASIC ONLY` 目标；其他看似数字的损坏报文只进入 RAW。
 - 合法 `1234002`（严格 10 CW、无不可纠错、NMEA 度分字段合法且分值小于 60）可以独立生成 `EXT ONLY` 目标并进入地图。
-- 同一 transmission 优先按 `TRANSMISSION_ID` 合并；跨突发可在 2 秒窗口内按 `TIME_FALLBACK` 补全，后续更新通过 `TARGET_STATE` 复用车次或机车目标。
+- 同一 transmission 优先按 `TRANSMISSION_ID` 合并；跨突发可在 5 秒候选窗口内按评分补全，后续更新通过 `TARGET_STATE` 复用车次或机车目标。
 - `----- --- -----` 是合法未知占位，不会丢掉同组 EXT 的机车与 GPS。
 - 默认页“列车接近预警”显示当前目标状态而不是报文历史；同一列车更新原行。120 秒无更新标记 `STALE`，300 秒后移除。
 - 每个目标最多保留最近 100 个 WGS84 轨迹点。
@@ -87,12 +91,14 @@ POCSAG 不会在正文里统一标明它应按 Numeric 还是 Alpha 解释。插
 ## 安装
 
 1. 关闭 SDRuno。
-2. 将 `release\SDRunoPlugin_POCSAG.dll`、`RailwayMapServer.exe` 和 `web` 文件夹复制到：
+2. 将 `release\SDRunoPlugin_POCSAG.dll`、`release\RailwayMapServer.exe` 和 `release\web` 文件夹复制到：
    `C:\Users\你的用户名\Documents\CommunityPlugins\`
 3. 重新启动 SDRuno，在插件面板加载 `POCSAG Railway Alert`。
 4. 点击插件窗口中的“一键设置 821.2375 MHz / NFM / 15 kHz”。
 
 插件仅用于无线电技术实验。不能把普通 SDR 和本插件作为铁路作业或人身安全防护设备，也不要公开传播接收到的非公开铁路业务信息。
+
+发布二进制使用 MSVC 动态运行库；系统缺少 `MSVCP140.dll` 或 `VCRUNTIME140.dll` 时，请安装 Microsoft Visual C++ 2015–2022 Redistributable（x86）。
 
 ## 编译
 
@@ -116,4 +122,7 @@ msbuild SDRunoPlugin_POCSAG.sln /p:Configuration=Release /p:Platform=x86
 ## 开源参考
 
 - SDRuno 插件接口：SDRplay 官方 Plugins SDK
-- 音频同步思路参考：开源 [PDW Paging Decoder](https://github.com/Discriminator/PDW)
+- 浏览器地图：[Leaflet](https://leafletjs.com/) 与 [OpenStreetMap](https://www.openstreetmap.org/copyright)
+- 音频同步思路参考：开源 [PDW Paging Decoder](https://github.com/Discriminator/PDW) 的过零间隔方法；本仓库未声明移植其源码
+
+SDRuno 和 SDRplay 是其各自权利人的产品或商标。本项目不是 SDRplay 官方产品。项目源码采用 [MIT License](LICENSE)，第三方组件与地图数据适用各自许可证和条款。
